@@ -22,7 +22,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float _playerSpeed = 10.0f;
     [SerializeField]
-    private float _playerMovementFault = 0.1f;
+    private float _playerMoveFault = 0.1f;
+    [SerializeField]
+    private float _rotationSmoothTime = 0.01f;
+    private float _currentVelocity;
 
     // The Awake function is called when the script instance is loaded.
     void Awake()
@@ -34,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         Vector3 movementDestination = HandleRaycastMovementDestination();
+        
         //Assign ray hit point as a destination and replace running coroutine with new
         if (_moveCoroutine != null) StopCoroutine(_moveCoroutine);
         _moveCoroutine = StartCoroutine(PlayerMoveTowards(movementDestination));
@@ -67,13 +71,30 @@ public class PlayerMovement : MonoBehaviour
         return raycastHit.point;
     }
 
-    // Handles gradually moving target to the set destination
-    private IEnumerator PlayerMoveTowards(Vector3 target)
+    // Handling rotation of player object in direction of movement
+    private void ApplyRotation(Vector3 destination)
     {
+        if (destination.sqrMagnitude == 0) return;
+        var targetAngle = Mathf.Atan2(destination.x, destination.z) * Mathf.Rad2Deg;
+        var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, _rotationSmoothTime);
+        transform.rotation = Quaternion.Euler(0.0f, angle, 0.0f);
+    }
+
+    // Applies player y(ground) offset
+    private float ApplyMoveOffsets(Vector3 target)
+    {
+        return transform.position.y - target.y;
+    }
+
+    // Handles gradually moving target to the set destination
+    private IEnumerator PlayerMoveTowards(Vector3 movementDestination)
+    {
+        movementDestination.y += ApplyMoveOffsets(movementDestination);
         // runs each frame - tied to Time
-        while (Vector3.Distance(transform.position, target) > _playerMovementFault)
+        while (Vector3.Distance(transform.position, movementDestination) > _playerMoveFault)
         {
-            Vector3 destination = Vector3.MoveTowards(transform.position, target, _playerSpeed*Time.deltaTime);
+            Vector3 destination = Vector3.MoveTowards(transform.position, movementDestination, _playerSpeed *Time.deltaTime);
+            ApplyRotation(destination);
             transform.position = destination;
             yield return null;
         }
