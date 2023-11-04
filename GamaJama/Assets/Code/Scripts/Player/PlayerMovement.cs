@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float _playerMoveFault = 0.1f;
     [SerializeField]
-    private float _rotationSmoothTime = 0.01f;
+    private float _rotationSmoothTime = 100.01f;
     private float _currentVelocity;
 
     // The Awake function is called when the script instance is loaded.
@@ -60,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
     // Returns point clicked on screen
     private Vector3 HandleRaycastMovementDestination()
     {
-        Ray ray = _playerCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        Ray ray = _playerCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastHit;
 
         if (Physics.Raycast(ray, out raycastHit)) 
@@ -74,9 +74,9 @@ public class PlayerMovement : MonoBehaviour
     // Handling rotation of player object in direction of movement
     private void ApplyRotation(Vector3 destination)
     {
-        if (destination.sqrMagnitude == 0) return;
+        //if (destination.sqrMagnitude == 0) return;
         var targetAngle = Mathf.Atan2(destination.x, destination.z) * Mathf.Rad2Deg;
-        var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, _rotationSmoothTime);
+        var angle = Mathf.MoveTowardsAngle(transform.eulerAngles.y, targetAngle, _rotationSmoothTime);
         transform.rotation = Quaternion.Euler(0.0f, angle, 0.0f);
     }
 
@@ -90,11 +90,13 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator PlayerMoveTowards(Vector3 movementDestination)
     {
         movementDestination.y += ApplyMoveOffsets(movementDestination);
+        Vector3 direction = movementDestination - transform.position;
+        ApplyRotation(direction.normalized);
+      
         // runs each frame - tied to Time
         while (Vector3.Distance(transform.position, movementDestination) > _playerMoveFault)
         {
             Vector3 destination = Vector3.MoveTowards(transform.position, movementDestination, _playerSpeed *Time.deltaTime);
-            ApplyRotation(destination);
             transform.position = destination;
             yield return null;
         }
