@@ -6,14 +6,6 @@ using UnityEngine.EventSystems;
 
 public abstract class Enemy : MonoBehaviour, IPlayerDamager
 {
-    public enum ufoType //list of the variations of the ufo
-    {
-        Ordinary,
-        Bomb
-    }
-    [SerializeField] ufoType _myType;
-    //[SerializeField] float _OrdinaryDamage = 10f;
-    //[SerializeField] float _BombDamage = 15f;
     private Vector3 _Myposition;
     private float _damage;
 
@@ -21,6 +13,12 @@ public abstract class Enemy : MonoBehaviour, IPlayerDamager
     public class OnPlColliArgs : EventArgs
     {
         public Vector3 ufoPosition;
+    }
+
+    protected float _Damage
+    {
+        get { return _damage; }
+        set { _damage = value; }
     }
 
     void Start()
