@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -15,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     // [Movement]
     // Stores current move coroutine
     private Coroutine _moveCoroutine;
+    private bool _isMoving = false;
     // Move destination parametres
     private Vector3 _movementDestination;
     private int _movementTargetLayer;
@@ -27,13 +30,23 @@ public class PlayerMovement : MonoBehaviour
     private float _rotationSmoothTime = 100.01f;
     private float _currentVelocity;
 
+    // [Events]
+    public event EventHandler<EnemyPointParams> OnPlayerMoved;
+    public event EventHandler<Vector3> OnPlayerFinishedMoving;
+
+    public class EnemyPointParams : EventArgs
+    {
+        public Vector3 enemyPointCoorditates;
+        public bool isLastPoint;
+    }
+
     // The Awake function is called when the script instance is loaded.
     void Awake()
     {
         _playerCamera = Camera.main;
     }
 
-    // Handles InputSystem Move
+    // Handles Move
     public void Move(InputAction.CallbackContext context)
     {
         Vector3 movementDestination = HandleRaycastMovementDestination();
@@ -43,19 +56,34 @@ public class PlayerMovement : MonoBehaviour
         _moveCoroutine = StartCoroutine(PlayerMoveTowards(movementDestination));
     }
 
-    // Handles InputSystem MoveToObject
-    public void MoveToObject(InputAction.CallbackContext context)
+    // Handles InputSystem MoveToEnemyPoint
+    public void MoveOnEnemyPoint(InputAction.CallbackContext context)
     {
-        Vector3 movementDestination= HandleRaycastMovementDestination();
+        if(!_isMoving)
+            HandleMove(false);
+    }
+    // Handles InputSystem Move - Right click
+    public void MoveOnClosingPoint(InputAction.CallbackContext context)
+    {
+        if (!_isMoving)
+            HandleMove(true);
+    }
+
+    private void HandleMove(bool IsLastPoint)
+    {
+        Vector3 movementDestination = HandleRaycastMovementDestination();
 
         if (_movementTargetLayer == _enemyLayer)
         {
             //Assign ray hit point as a destination and replace running coroutine with new
+
             if (_moveCoroutine != null) StopCoroutine(_moveCoroutine);
             _moveCoroutine = StartCoroutine(PlayerMoveTowards(movementDestination));
+            
+            OnPlayerMoved?.Invoke(this, new EnemyPointParams 
+            { enemyPointCoorditates = movementDestination, isLastPoint = IsLastPoint });
         }
     }
-
     // Handles casting ray from camera to track mouse and stores collider layerId
     // Returns point clicked on screen
     private Vector3 HandleRaycastMovementDestination()
@@ -91,15 +119,19 @@ public class PlayerMovement : MonoBehaviour
     {
         movementDestination.y += ApplyMoveOffsets(movementDestination);
         Vector3 direction = movementDestination - transform.position;
-        ApplyRotation(direction.normalized);
-      
+        
+        _isMoving = true;
+
         // runs each frame - tied to Time
         while (Vector3.Distance(transform.position, movementDestination) > _playerMoveFault)
         {
+            ApplyRotation(direction.normalized);
             Vector3 destination = Vector3.MoveTowards(transform.position, movementDestination, _playerSpeed *Time.deltaTime);
             transform.position = destination;
             yield return null;
         }
+        OnPlayerFinishedMoving?.Invoke(this, movementDestination );
+        _isMoving = false;
     }
 
     // Spawns sphere in editor for debug purposes
@@ -109,4 +141,8 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawSphere(_movementDestination, 1);
     }
 
+    private void OnTriggerEnter(Collider collider)
+    {
+       // create collision coords event
+    }
 }

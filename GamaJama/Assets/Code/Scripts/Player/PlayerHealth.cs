@@ -1,71 +1,61 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerHealth : MonoBehaviour
 {
     // [Health]
-    private int healthCurrent;
+    private int _healthCurrent;
     [SerializeField]
-    private int healthInitial = 60;
+    private int _healthInitial = 60;
+    [SerializeField]
+    private int _healthDrainPerSecond = 1;
+
     // [Events]
+    public event EventHandler<int> onPlayerHealthChanged;
+    public event EventHandler onPlayerDeath;
 
-    [Header("Events")]
-
-    public event EventHandler<int> PlayerHealthChanged;
-
-    // [Timer]
-    private WaitForSeconds waitForSeconds;
-
-    // Start is called before the first frame update
-    private void Awake()
+    private void Start()
     {
         HealthReset();
-        waitForSeconds = new WaitForSeconds(1.0f);
-        StartCoroutine(HealthDrain(1));
-        //InvokeRepeating("HealthDrain", 0, 1.0f);
     }
     // Sets player's current health back to its initial value
     public void HealthReset()
     {
-        healthCurrent = healthInitial;
-        onPlayerHealthChanged.Invoke();
+        _healthCurrent = _healthInitial;
+        onPlayerHealthChanged?.Invoke(this, _healthCurrent);
+        // sets hp timer that lowers every second
+        InvokeRepeating("HealthDrain", 0, 1.0f);
     }
 
     // Reduces player's current health
     public void HealthDamage(int damageAmount)
     {
-        healthCurrent -= damageAmount;
-        onPlayerHealthChanged.Invoke();
-        if (healthCurrent <= 0)
-        { 
-            // вызвать смерть
+        _healthCurrent -= damageAmount;
+        onPlayerHealthChanged?.Invoke(this, _healthCurrent);
+        if (_healthCurrent <= 0)
+        {
+            onPlayerDeath?.Invoke(this, EventArgs.Empty);
         }
     }
 
     //Increases player's current health
     public void HealthRestore(int healAmount)
     {
-        healthCurrent += healAmount;
-        onPlayerHealthChanged.Invoke();
+        _healthCurrent += healAmount;
+        onPlayerHealthChanged?.Invoke(this, _healthCurrent);
     }
 
-    IEnumerator HealthDrain(int amount)
+    private void HealthDrain()
     {
-        HealthDamage(amount);
-        Debug.Log("Player current hp: "+healthCurrent);
-        //play animation
-        yield return waitForSeconds;
-        StartCoroutine(HealthDrain(1));
+        HealthDamage(_healthDrainPerSecond);
+        Debug.Log("Player hp: " + _healthCurrent);
     }
 
-    protected virtual void OnPlayerHealthChanged(EventArgs e)
+    private void OnTriggerEnter(Collider collider)
     {
-        PlayerHealthChanged?.Invoke(this, e);
-    }
-    protected virtual void OnPlayerDeath(EventArgs e)
-    {
-        Debug.Log("Dead " + healthCurrent);
-        // Invoke interface and death animations things
+        //get damage from enemy 
     }
 }
