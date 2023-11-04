@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -24,7 +25,6 @@ public class PolygonController : MonoBehaviour
 
     private void DrawPolygon()
     {
-        _lineRenderer.positionCount = _staticPoints.Count + 1;
         DrawStaticSegments();
         if(!_isClosedUp)
             DrawDynamicSegment();
@@ -32,11 +32,13 @@ public class PolygonController : MonoBehaviour
 
     private void DrawStaticSegments()
     {
+        _lineRenderer.positionCount = _staticPoints.Count;
         _lineRenderer.SetPositions(_staticPoints.ToArray());
     }
 
     private void DrawDynamicSegment()
     {
+        _lineRenderer.positionCount += 1;
         _lineRenderer.SetPosition(_lineRenderer.positionCount - 1, _dynamicPoint.position);
     }
 
@@ -50,7 +52,44 @@ public class PolygonController : MonoBehaviour
 
     private void CloseUpPolygon()
     {
-        _staticPoints.Add(_staticPoints[0]);
+        _lineRenderer.loop = true;
         _isClosedUp = true;
+
+        FindCollectablesInside();
     }
+
+    private void FindCollectablesInside()
+    {
+        //var collectables = FindObjectsOfType<ICollectable>();
+        
+        //foreach(var collectable in collectables)
+        //{
+        //    if(IsPointInside(collectable.GetPosition()))
+        //        collectable.Collect();
+        //}
+    }
+
+    public bool IsPointInside(Vector3 point)
+    {
+        bool parity = false;
+
+        for(int i = 0, j = _staticPoints.Count - 1; i < _staticPoints.Count; j = i++)
+        {
+            if( 
+                    ((_staticPoints[i].z <= point.z) && (point.z < _staticPoints[j].z) 
+                    ||
+                    (_staticPoints[j].z <= point.z) &&  (point.z < _staticPoints[i].z))
+                &&
+                    ((_staticPoints[j].z - _staticPoints[i].z != 0)
+                    &&
+                    (point.x > ((_staticPoints[j].x - _staticPoints[i].x) 
+                        * 
+                        (point.z - _staticPoints[i].z) / (_staticPoints[j].z - _staticPoints[i].z) + _staticPoints[i].x)))
+            )
+                parity = !parity;
+        }
+
+        return parity;
+    }
+
 }
