@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Enemy : MonoBehaviour, IPlayerDamager
+public abstract class Enemy : MonoBehaviour, IPlayerDamager
 {
     public enum ufoType //list of the variations of the ufo
     {
@@ -12,9 +12,10 @@ public class Enemy : MonoBehaviour, IPlayerDamager
         Bomb
     }
     [SerializeField] ufoType _myType;
-    [SerializeField] float _OrdinaryDamage = 10f;
-    [SerializeField] float _BombDamage = 15f;
+    //[SerializeField] float _OrdinaryDamage = 10f;
+    //[SerializeField] float _BombDamage = 15f;
     private Vector3 _Myposition;
+    private float _damage;
 
     public event EventHandler<OnPlColliArgs> OnPlayerColision;
     public class OnPlColliArgs : EventArgs
@@ -29,24 +30,14 @@ public class Enemy : MonoBehaviour, IPlayerDamager
 
     public float GetDamage()
     {
-        if (_myType == ufoType.Ordinary)
-        {
-            return _OrdinaryDamage;
-        }
-        else if (_myType == ufoType.Bomb)
-        {
-            return _BombDamage;
-        }
-        else
-        {
-            return 0f;
-        }
+        return _damage;
     }
 
     private void OnTriggerEnter(Collider other) //detect collision with player by cheaking tag, then act accordingly to the ufo type
     {
         if (other.CompareTag("Player")){
             OnPlayerColision?.Invoke(this, new OnPlColliArgs { ufoPosition = _Myposition });
+            Debug.Log(_damage);
             //some animation before it's destroted?
             Destroy(gameObject);
         }
