@@ -39,7 +39,7 @@ public class EnemController : MonoBehaviour
         }
     }
     
-
+    //to do:
     //red green light - need ship position and player hp
 }
 
