@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Enemy;
 
-public class EnemController : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
 
     [SerializeField] private List<Enemy> _ShipsList;
