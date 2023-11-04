@@ -10,7 +10,7 @@ public class MeteorController : MonoBehaviour
 
     public event EventHandler<float> OnPlaTakeDamageandStop;
     public event EventHandler OnDestroyPath;
-    [SerializeField] float _MeteorDamage = 20f;
+    
     void Start()
     {
         foreach (var enemy in _ShipsList)
@@ -21,9 +21,7 @@ public class MeteorController : MonoBehaviour
 
     private void MeteorCollide(object sender, EventArgs e)
     {
-        OnPlaTakeDamageandStop?.Invoke(this, _MeteorDamage);
         OnDestroyPath?.Invoke(this, EventArgs.Empty);
-        Debug.Log(_MeteorDamage);
         Debug.Log("meteor");
     }
 }

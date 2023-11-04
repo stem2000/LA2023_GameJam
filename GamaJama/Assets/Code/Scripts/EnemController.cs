@@ -9,7 +9,6 @@ public class EnemController : MonoBehaviour
 
     [SerializeField] private List<Enemy> _ShipsList;
 
-    public event EventHandler<float> OnPlTakeDamage;
     public event EventHandler<Vector3> OnShipDropLoot;
     public event EventHandler OnAllUFOSDefeated;
 
@@ -22,15 +21,10 @@ public class EnemController : MonoBehaviour
     }
     private void ShipDied(object sender, OnPlColliArgs e)
     {
-        OnPlTakeDamage?.Invoke(this, e.heaithDamage);
         OnShipDropLoot?.Invoke(this, e.ufoPosition);
 
         Enemy enemy = (Enemy)sender;
         _ShipsList.Remove(enemy);
-
-        Debug.Log("Space");
-        Debug.Log(e.heaithDamage);
-        Debug.Log("death");
 
         if (_ShipsList.Count == 0)
         {
