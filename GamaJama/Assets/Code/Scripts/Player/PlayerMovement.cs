@@ -88,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
     // Returns point clicked on screen
     private Vector3 HandleRaycastMovementDestination()
     {
-        Ray ray = _playerCamera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = _playerCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
         RaycastHit raycastHit;
 
         if (Physics.Raycast(ray, out raycastHit)) 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static TimeCollectable;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -56,6 +57,8 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnTriggerEnter(Collider collider)
     {
-        //get damage from enemy 
+        // listeners for collectables
+        // and for damage take from enemies
+        //TimeCollectable.BoosterTaken();
     }
 }
