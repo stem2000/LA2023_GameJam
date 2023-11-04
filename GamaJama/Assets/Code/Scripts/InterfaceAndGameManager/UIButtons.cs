@@ -1,15 +1,24 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
 public class UIButtons : MonoBehaviour
 {
+    public static event Action<bool> pauseEvent;
+
+
     public void Levels(int idScene)
     {
         SceneManager.LoadScene(idScene);
         Debug.Log(idScene);
     }
 
+    public void PauseButton(bool pauseClick)
+    {
+        pauseClick = !pauseClick;
+        pauseEvent?.Invoke(pauseClick);
+    }
     public void Restart()
     {
         Time.timeScale = 1;
