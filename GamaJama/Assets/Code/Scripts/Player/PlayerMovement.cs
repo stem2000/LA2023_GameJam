@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     // Move destination parametres
     private Vector3 _movementDestination;
     private int _movementTargetLayer;
+    private GameObject _movementTargetObject;
     // Movement balance variables
     [SerializeField]
     private float _playerSpeed = 10.0f;
@@ -32,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
 
     // [Events]
     public event EventHandler<EnemyPointParams> OnPlayerMoved;
-    public event EventHandler<Vector3> OnPlayerFinishedMoving;
+    public event EventHandler<EnemyPointParams> OnPlayerFinishedMoving;
 
     public class EnemyPointParams : EventArgs
     {
@@ -49,11 +50,11 @@ public class PlayerMovement : MonoBehaviour
     // Handles Move
     public void Move(InputAction.CallbackContext context)
     {
-        Vector3 movementDestination = HandleRaycastMovementDestination();
+        GameObject movementDestination = HandleRaycastMovementDestination();
         
         //Assign ray hit point as a destination and replace running coroutine with new
         if (_moveCoroutine != null) StopCoroutine(_moveCoroutine);
-        _moveCoroutine = StartCoroutine(PlayerMoveTowards(movementDestination));
+        _moveCoroutine = StartCoroutine(PlayerMoveTowards(movementDestination, false));
     }
 
     // Handles InputSystem MoveToEnemyPoint
@@ -71,22 +72,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMove(bool IsLastPoint)
     {
-        Vector3 movementDestination = HandleRaycastMovementDestination();
+        GameObject movementDestination = HandleRaycastMovementDestination();
 
         if (_movementTargetLayer == _enemyLayer)
         {
             //Assign ray hit point as a destination and replace running coroutine with new
 
             if (_moveCoroutine != null) StopCoroutine(_moveCoroutine);
-            _moveCoroutine = StartCoroutine(PlayerMoveTowards(movementDestination));
+            _moveCoroutine = StartCoroutine(PlayerMoveTowards(movementDestination, IsLastPoint));
             
             OnPlayerMoved?.Invoke(this, new EnemyPointParams 
-            { enemyPointCoorditates = movementDestination, isLastPoint = IsLastPoint });
+            { enemyPointCoorditates = movementDestination.transform.position, isLastPoint = IsLastPoint });
         }
     }
     // Handles casting ray from camera to track mouse and stores collider layerId
     // Returns point clicked on screen
-    private Vector3 HandleRaycastMovementDestination()
+    private GameObject HandleRaycastMovementDestination()
     {
         Ray ray = _playerCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
         RaycastHit raycastHit;
@@ -94,9 +95,10 @@ public class PlayerMovement : MonoBehaviour
         if (Physics.Raycast(ray, out raycastHit)) 
         {
             _movementTargetLayer = raycastHit.collider.gameObject.layer;
+            _movementTargetObject = raycastHit.collider.gameObject;
             _movementDestination = raycastHit.point;
         }
-        return raycastHit.point;
+        return raycastHit.collider.gameObject;
     }
 
     // Handling rotation of player object in direction of movement
@@ -115,22 +117,25 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Handles gradually moving target to the set destination
-    private IEnumerator PlayerMoveTowards(Vector3 movementDestination)
+    private IEnumerator PlayerMoveTowards(GameObject objectDestination, bool IsLastPoint)
     {
-        movementDestination.y += ApplyMoveOffsets(movementDestination);
-        Vector3 direction = movementDestination - transform.position;
-        
+        Vector3 movementDestination = objectDestination.transform.position;
+
         _isMoving = true;
 
         // runs each frame - tied to Time
         while (Vector3.Distance(transform.position, movementDestination) > _playerMoveFault)
         {
+            movementDestination = objectDestination.transform.position;
+            movementDestination.y += ApplyMoveOffsets(movementDestination);
+            Vector3 direction = movementDestination - transform.position;
             ApplyRotation(direction.normalized);
             Vector3 destination = Vector3.MoveTowards(transform.position, movementDestination, _playerSpeed *Time.deltaTime);
             transform.position = destination;
             yield return null;
         }
-        OnPlayerFinishedMoving?.Invoke(this, movementDestination );
+        OnPlayerFinishedMoving?.Invoke(this, new EnemyPointParams
+        { enemyPointCoorditates = movementDestination, isLastPoint = IsLastPoint });
         _isMoving = false;
     }
 
