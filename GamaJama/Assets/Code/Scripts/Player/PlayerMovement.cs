@@ -41,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyRotation(Vector3 destination)
     {
-        var targetAngle = Mathf.Atan2(destination.x, destination.y) * Mathf.Rad2Deg;
+        var targetAngle = Mathf.Atan2(destination.y, destination.x) * Mathf.Rad2Deg;
         var angle = Mathf.MoveTowardsAngle(transform.eulerAngles.z, targetAngle, _rotationSmoothTime);
         transform.rotation = Quaternion.Euler(0.0f, 0.0f, angle);
     }
