@@ -63,7 +63,7 @@ public class PolygonController : MonoBehaviour
         polyCopy.loop = true;
 
         yield return new WaitForSeconds(_timeBeforeDestroy);
-        Destroy(polyCopy);
+        Destroy(polyCopy.gameObject);
     }
 
     private void FindCollectablesInside()
