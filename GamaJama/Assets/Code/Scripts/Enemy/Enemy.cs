@@ -14,7 +14,7 @@ public abstract class Enemy : MonoBehaviour, IPlayerDamager
     void Update()
     {
         if (_isDamageDone)
-            Destroy(gameObject);
+            SelfDestroy();
     }
 
     public int GetDamage()
