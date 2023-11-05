@@ -5,7 +5,7 @@ using UnityEngine;
 public class EntryPoint : MonoBehaviour
 {
     [SerializeField] private PolygonController _polygonController;
-    [SerializeField] private PlayerMovement _playerMovement;
+    [SerializeField] private PlayerController _playerController;
 
     private void Start()
     {
@@ -14,14 +14,15 @@ public class EntryPoint : MonoBehaviour
 
     private void InitializeComponents()
     {
-        _polygonController.Initialize(_playerMovement.transform);
+        _playerController.Initialize();
+        _polygonController.Initialize(_playerController.transform);
 
         SubscribeComponentsToPlayerEvents();
     }
 
     private void SubscribeComponentsToPlayerEvents()
     {
-
+        _playerController.OnPointReached += _polygonController.AddPoint;
     }
 
 }

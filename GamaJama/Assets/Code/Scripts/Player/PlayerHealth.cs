@@ -54,11 +54,4 @@ public class PlayerHealth : MonoBehaviour
         HealthDamage(_healthDrainPerSecond);
         Debug.Log("Player hp: " + _healthCurrent);
     }
-
-    private void OnTriggerEnter(Collider collider)
-    {
-        // listeners for collectables
-        // and for damage take from enemies
-        //TimeCollectable.BoosterTaken();
-    }
 }

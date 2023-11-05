@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -60,13 +61,13 @@ public class PolygonController : MonoBehaviour
 
     private void FindCollectablesInside()
     {
-        //var collectables = FindObjectsOfType<ICollectable>();
-        
-        //foreach(var collectable in collectables)
-        //{
-        //    if(IsPointInside(collectable.GetPosition()))
-        //        collectable.Collect();
-        //}
+        var collectables = FindObjectsOfType<MonoBehaviour>().OfType<ICollectable>();
+
+        foreach (var collectable in collectables)
+        {
+            if (IsPointInside(collectable.GetPosition()))
+                collectable.Collect();
+        }
     }
 
     public bool IsPointInside(Vector3 point)
@@ -76,15 +77,15 @@ public class PolygonController : MonoBehaviour
         for(int i = 0, j = _staticPoints.Count - 1; i < _staticPoints.Count; j = i++)
         {
             if( 
-                    ((_staticPoints[i].z <= point.z) && (point.z < _staticPoints[j].z) 
+                    ((_staticPoints[i].x <= point.x) && (point.x < _staticPoints[j].x) 
                     ||
-                    (_staticPoints[j].z <= point.z) &&  (point.z < _staticPoints[i].z))
+                    (_staticPoints[j].x <= point.x) &&  (point.x < _staticPoints[i].x))
                 &&
-                    ((_staticPoints[j].z - _staticPoints[i].z != 0)
+                    ((_staticPoints[j].x - _staticPoints[i].x != 0)
                     &&
-                    (point.x > ((_staticPoints[j].x - _staticPoints[i].x) 
+                    (point.x > ((_staticPoints[j].y - _staticPoints[i].y) 
                         * 
-                        (point.z - _staticPoints[i].z) / (_staticPoints[j].z - _staticPoints[i].z) + _staticPoints[i].x)))
+                        (point.x - _staticPoints[i].x) / (_staticPoints[j].x - _staticPoints[i].x) + _staticPoints[i].y)))
             )
                 parity = !parity;
         }
