@@ -28,18 +28,19 @@ public abstract class Enemy : MonoBehaviour, IPlayerDamager
 
     public float GetDamage()
     {
+        OnPlayerColision?.Invoke(this, new OnPlColliArgs { ufoPosition = _Myposition });
+        Debug.Log(_damage);
+        //some animation before it's destroted?
+        Destroy(gameObject);
         return _damage;
     }
 
-    private void OnTriggerEnter(Collider other) //detect collision with player by cheaking tag, then act accordingly to the ufo type
-    {
-        if (other.CompareTag("Player")){
-            OnPlayerColision?.Invoke(this, new OnPlColliArgs { ufoPosition = _Myposition });
-            Debug.Log(_damage);
-            //some animation before it's destroted?
-            Destroy(gameObject);
-        }
-    }
+    //private void OnTriggerEnter(Collider other) //detect collision with player by cheaking tag, then act accordingly to the ufo type
+    //{
+    //    if (other.CompareTag("Player")){
+           
+    //    }
+    //}
 
    
 }
