@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class GameManagerScript : MonoBehaviour
 {
-    public event EventHandler OnAllUFOSDefeated;// for testing, deleted 
 
 
     [SerializeField] private List<GameObject> menusList;
@@ -20,8 +19,7 @@ public class GameManagerScript : MonoBehaviour
 
     private void Start()
     {
-        OnAllUFOSDefeated += WinPlayer;
-        UIButtons.pauseEvent += PauseMenuView;
+        UIButtons.pauseEvent += PauseMenuView; // then add entri point
     }
     private void PauseMenuView(bool pause)
     {
