@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
 
         _isMoving = true;
 
-        while (Vector3.Distance(transform.position, movementDestination) > _playerMoveFault)
+        while (target != null && Vector3.Distance(transform.position, movementDestination) > _playerMoveFault)
         {
             movementDestination = target.position;
             Vector3 direction = movementDestination - transform.position;

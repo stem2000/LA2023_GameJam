@@ -10,14 +10,6 @@ public class MeteorController : MonoBehaviour
 
     public event EventHandler<float> OnPlaTakeDamageandStop;
     public event EventHandler OnDestroyPath;
-    
-    void Start()
-    {
-        foreach (var enemy in _ShipsList)
-        {
-            enemy.OnPlayerColision += MeteorCollide;
-        }
-    }
 
     private void MeteorCollide(object sender, EventArgs e)
     {
@@ -26,6 +18,3 @@ public class MeteorController : MonoBehaviour
     }
 }
 
-//this script gets the event that player colided with a meteor,
-//and then sendt a message to plaer to take damadge and stop, and
-//to the script that draws path to abort drawing

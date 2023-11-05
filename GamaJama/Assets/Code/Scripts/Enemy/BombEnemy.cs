@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class BombEnemy : Enemy
 {
-    [SerializeField] float damage = 15f;
-    private void Start()
+    protected override void SelfDestroy()
     {
-        _Damage = damage;
+        throw new System.NotImplementedException();
     }
 }
 

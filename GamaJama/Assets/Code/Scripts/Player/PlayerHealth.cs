@@ -40,6 +40,8 @@ public class PlayerHealth : MonoBehaviour
         {
             onPlayerDeath?.Invoke(this, EventArgs.Empty);
         }
+
+        Debug.Log("Player hp: " + _healthCurrent);
     }
 
     //Increases player's current health
@@ -52,6 +54,5 @@ public class PlayerHealth : MonoBehaviour
     private void HealthDrain()
     {
         HealthDamage(_healthDrainPerSecond);
-        Debug.Log("Player hp: " + _healthCurrent);
     }
 }

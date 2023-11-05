@@ -55,10 +55,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject == _clickedObject)
-        {
+        var playerDamager = collision.gameObject.GetComponent<IPlayerDamager>();
+
+        if (collision.gameObject == _clickedObject)
             OnPointReached?.Invoke(collision.transform.position, _pointStatus);
-        }
+
+        if(playerDamager != null)
+            _playerHealth.HealthDamage(playerDamager.GetDamage());
     }
 
 }

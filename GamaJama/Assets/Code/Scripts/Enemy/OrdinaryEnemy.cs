@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class OrdinaryEnemy : Enemy
 {
-    [SerializeField] float damage = 10f;
-    private void Start()
+    private EnemyMovement _movement;
+    protected override void SelfDestroy()
     {
-        _Damage = damage;
+        _movement.CanMove = false;
+        Destroy(this.gameObject);
     }
-
 }

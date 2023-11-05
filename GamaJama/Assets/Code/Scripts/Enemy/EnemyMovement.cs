@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyMove : MonoBehaviour
+public class EnemyMovement : MonoBehaviour
 {
-    public Transform[] _waypoints; 
-    [SerializeField] float _speed = 2.0f; 
+    public List<Transform> _waypoints; 
+    [SerializeField] float _speed = 2.0f;
 
+    [HideInInspector] public bool CanMove = true;
     private int _currentWaypointIndex = 0;
     private Transform _currentWaypoint;
 
     void Start()
     {
-        if (_waypoints.Length > 0)
+        if (_waypoints.Count > 0)
         {
             _currentWaypoint = _waypoints[_currentWaypointIndex];
         }
@@ -20,9 +21,15 @@ public class EnemyMove : MonoBehaviour
 
     void Update()
     {
-        if (_waypoints.Length == 0)
+       if(CanMove) 
+            Move();
+    }
+
+    private void Move()
+    {
+        if (_waypoints.Count == 0)
         {
-            return; 
+            return;
         }
         Vector3 direction = _currentWaypoint.position - transform.position;
 
@@ -30,7 +37,7 @@ public class EnemyMove : MonoBehaviour
 
         if (Vector3.Distance(transform.position, _currentWaypoint.position) < 0.1f)
         {
-            _currentWaypointIndex = (_currentWaypointIndex + 1) % _waypoints.Length;
+            _currentWaypointIndex = (_currentWaypointIndex + 1) % _waypoints.Count;
             _currentWaypoint = _waypoints[_currentWaypointIndex];
         }
     }
