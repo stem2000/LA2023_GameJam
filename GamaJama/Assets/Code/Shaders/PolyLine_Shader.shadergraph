@@ -1098,9 +1098,9 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "r": 1.4415093660354615,
-        "g": 2.0793135166168215,
-        "b": 5.992157459259033,
+        "r": 1.0,
+        "g": 0.3796170651912689,
+        "b": 0.0,
         "a": 0.0
     },
     "isMainColor": false,
@@ -1372,7 +1372,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 5.0,
+    "m_Value": 1.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,

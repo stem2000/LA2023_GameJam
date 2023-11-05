@@ -49,6 +49,7 @@ public class PlayerHealth : MonoBehaviour
     {
         _healthCurrent += healAmount;
         onPlayerHealthChanged?.Invoke(this, _healthCurrent);
+        Debug.Log("Player healed: " + _healthCurrent);
     }
 
     private void HealthDrain()

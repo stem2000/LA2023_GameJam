@@ -6,10 +6,14 @@ using UnityEngine.EventSystems;
 
 public class TimeCollectable : MonoBehaviour, ICollectable
 {
-    private bool _state = true;
     private int _value = 5;
-    public event EventHandler<int> OnBoosterTaken;
+    public event Action<int> OnCollectableTaken;
+    private PlayerHealth _playerHealth;
 
+    public void Initialize()
+    {
+        _playerHealth = GetComponent<PlayerHealth>();
+    }
     public Vector3 GetPosition()
     {
         return this.transform.position;
@@ -17,10 +21,7 @@ public class TimeCollectable : MonoBehaviour, ICollectable
 
     public void Collect()
     {
-        _state = false;
-        OnBoosterTaken?.Invoke(this, _value);
-
-        // дать пользователю хп
+        OnCollectableTaken?.Invoke( _value);
         Destroy(gameObject);
         // удалить обьект проиграть анимацию
     }
