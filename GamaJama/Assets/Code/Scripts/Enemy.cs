@@ -8,6 +8,7 @@ public abstract class Enemy : MonoBehaviour, IPlayerDamager
 {
     private Vector3 _Myposition;
     private float _damage;
+    private bool damadge_done = false;
 
     public event EventHandler<OnPlColliArgs> OnPlayerColision;
     public class OnPlColliArgs : EventArgs
@@ -25,13 +26,20 @@ public abstract class Enemy : MonoBehaviour, IPlayerDamager
     {
         _Myposition = transform.position;
     }
+    void Update()
+    {
+        if (damadge_done)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public float GetDamage()
     {
         OnPlayerColision?.Invoke(this, new OnPlColliArgs { ufoPosition = _Myposition });
         Debug.Log(_damage);
         //some animation before it's destroted?
-        Destroy(gameObject);
+        damadge_done = true;
         return _damage;
     }
 
