@@ -15,7 +15,7 @@ public class TimeCollectable : MonoBehaviour, ICollectable
         return this.transform.position;
     }
 
-    public void Collected()
+    public void Collect()
     {
         _state = false;
         OnBoosterTaken?.Invoke(this, _value);
