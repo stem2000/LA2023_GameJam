@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6a3bac188dd14b4bb62616ca89cadb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  _damage: 0
 --- !u!114 &7649249848844051057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,6 +180,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _waypoints: []
   _speed: 2
+  CanMove: 1
 --- !u!1 &1000146163496014095
 GameObject:
   m_ObjectHideFlags: 0
@@ -1066,8 +1067,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9031628317083193968}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071069, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.9567335, y: -0, z: -0, w: -0.29096547}
+  m_LocalPosition: {x: 0, y: 0.0420422, z: 0.01298029}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1083,4 +1084,4 @@ Transform:
   - {fileID: 2911573610671154344}
   - {fileID: 8531499426395372846}
   m_Father: {fileID: 8957299143678007940}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 213.832, y: 0, z: 0}
