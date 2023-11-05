@@ -1,22 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PolygonController : MonoBehaviour
 {
-    private List<Vector3> _staticPoints;
-    private Transform _dynamicPoint;
+    [SerializeField] private float _timeBeforeDestroy = 1f;
+
+    private List<Vector3> _polyPoints;
     private LineRenderer _lineRenderer;
-    private bool _isClosedUp = false;
     
-    public void Initialize(Transform movingPoint)
+    public void Initialize(Vector3 startPoint)
     {
-        _dynamicPoint = movingPoint;
-        _staticPoints = new List<Vector3>(){ _dynamicPoint.position };
-        _lineRenderer = GetComponent<LineRenderer>();
+        _polyPoints = new List<Vector3>(){ startPoint };
+        _lineRenderer = GetComponentInChildren<LineRenderer>();
     }
 
     void Update()
@@ -26,26 +25,18 @@ public class PolygonController : MonoBehaviour
 
     private void DrawPolygon()
     {
-        DrawStaticSegments();
-        if(!_isClosedUp)
-            DrawDynamicSegment();
+        UpdateSegments(_lineRenderer);
     }
 
-    private void DrawStaticSegments()
+    private void UpdateSegments(LineRenderer lineRenderer)
     {
-        _lineRenderer.positionCount = _staticPoints.Count;
-        _lineRenderer.SetPositions(_staticPoints.ToArray());
-    }
-
-    private void DrawDynamicSegment()
-    {
-        _lineRenderer.positionCount += 1;
-        _lineRenderer.SetPosition(_lineRenderer.positionCount - 1, _dynamicPoint.position);
+        lineRenderer.positionCount = _polyPoints.Count;
+        lineRenderer.SetPositions(_polyPoints.ToArray());
     }
 
     public void AddPoint(Vector3 point, bool isEndPoint)
     {
-        _staticPoints.Add(point);
+        _polyPoints.Add(point);
 
         if(isEndPoint)
             CloseUpPolygon();
@@ -53,10 +44,26 @@ public class PolygonController : MonoBehaviour
 
     private void CloseUpPolygon()
     {
-        _lineRenderer.loop = true;
-        _isClosedUp = true;
-
+        StartCoroutine(DisplayPolyCopy(Instantiate(_lineRenderer, transform)));
         FindCollectablesInside();
+        ResetPoints();
+    }
+
+    private void ResetPoints()
+    {
+        var lastPoint = _polyPoints.Last();
+
+        _polyPoints.Clear();
+        _polyPoints.Add(lastPoint);
+    }
+
+    private IEnumerator DisplayPolyCopy(LineRenderer polyCopy)
+    {
+        UpdateSegments(polyCopy);
+        polyCopy.loop = true;
+
+        yield return new WaitForSeconds(_timeBeforeDestroy);
+        Destroy(polyCopy.gameObject);
     }
 
     private void FindCollectablesInside()
@@ -74,18 +81,19 @@ public class PolygonController : MonoBehaviour
     {
         bool parity = false;
 
-        for(int i = 0, j = _staticPoints.Count - 1; i < _staticPoints.Count; j = i++)
+        for(int i = 0, j = _polyPoints.Count - 1; i < _polyPoints.Count; j = i++)
         {
             if( 
-                    ((_staticPoints[i].x <= point.x) && (point.x < _staticPoints[j].x) 
-                    ||
-                    (_staticPoints[j].x <= point.x) &&  (point.x < _staticPoints[i].x))
+                (
+                    ((_polyPoints[i].y <= point.y) && (point.y < _polyPoints[j].y))
+                        ||
+                    ((_polyPoints[j].y <= point.y) && (point.y < _polyPoints[i].y))
+                )
                 &&
-                    ((_staticPoints[j].x - _staticPoints[i].x != 0)
-                    &&
-                    (point.x > ((_staticPoints[j].y - _staticPoints[i].y) 
-                        * 
-                        (point.x - _staticPoints[i].x) / (_staticPoints[j].x - _staticPoints[i].x) + _staticPoints[i].y)))
+                (
+                    point.x > (_polyPoints[j].x - _polyPoints[i].x) *
+                        (point.y - _polyPoints[i].y) / (_polyPoints[j].y - _polyPoints[i].y) + _polyPoints[i].x
+                )
             )
                 parity = !parity;
         }
