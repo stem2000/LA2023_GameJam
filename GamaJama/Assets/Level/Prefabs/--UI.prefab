@@ -185,7 +185,6 @@ MonoBehaviour:
   - {fileID: 3520434916330103498}
   pauseButton: 27
   timerHP: {fileID: 8376341425608327619}
-  timerMaxValue: 60
 --- !u!1 &1461397332436306681
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,7 +511,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8774455132798322391}
   - component: {fileID: 7326810148281386667}
-  - component: {fileID: 1268986496313904676}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -550,26 +548,6 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
---- !u!114 &1268986496313904676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2572074198917504393}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!1 &2675547636550742689
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,7 +812,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3250961992406649964}
   m_Layer: 0
-  m_Name: AllGameMenuAndGameManager
+  m_Name: --UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
