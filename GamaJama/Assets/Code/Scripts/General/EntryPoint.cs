@@ -7,6 +7,7 @@ public class EntryPoint : MonoBehaviour
 {
     [SerializeField] private PolygonController _polygonController;
     [SerializeField] private PlayerController _playerController;
+    [SerializeField] private PlayerMovement _playerMovement;
     [SerializeField] private PlayerHealth _playerHealth;
     private void Start()
     {
@@ -22,7 +23,7 @@ public class EntryPoint : MonoBehaviour
 
     private void SubscribeComponentsToPlayerEvents()
     {
-        _playerController.OnPointReached += _polygonController.AddPoint;
+        _playerMovement.OnPointReached += _polygonController.AddPoint;
         var collectables = FindObjectsOfType<TimeCollectable>();
 
         foreach (var collectable in collectables)
