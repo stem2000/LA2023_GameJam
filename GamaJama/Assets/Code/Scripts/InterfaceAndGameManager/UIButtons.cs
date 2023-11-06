@@ -5,15 +5,20 @@ using UnityEngine.SceneManagement;
 
 public class UIButtons : MonoBehaviour
 {
-    public  event Action<bool> pauseEvent;
+    public event Action<bool> pauseEvent;
 
 
     public void Levels(int idScene)
     {
-        SceneManager.LoadScene(idScene);
-        Debug.Log(idScene);
+        Time.timeScale = 1;
+        SceneManager.LoadScene(idScene + 1);
+        Debug.Log(idScene + 1);
     }
-
+    public void MainMenu(int idScene)
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(idScene);
+    }
     public void PauseButton(bool pauseClick)
     {
         pauseClick = !pauseClick;
