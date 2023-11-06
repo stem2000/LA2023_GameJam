@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,12 @@ public class EntryPoint : MonoBehaviour
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private PlayerMovement _playerMovement;
     [SerializeField] private PlayerHealth _playerHealth;
-    private void Start()
+
+    [SerializeField] private EnemyController _enemyController;
+
+    [SerializeField] private GameManagerScript _gameManagerScript;
+    [SerializeField] private UIButtons _buttonsPause;
+    private void Awake()
     {
         InitializeComponents();
     }
@@ -23,6 +29,12 @@ public class EntryPoint : MonoBehaviour
 
     private void SubscribeComponentsToPlayerEvents()
     {
+        _playerHealth.onPlayerDeath += _gameManagerScript.DefeatPlayer;
+        _gameManagerScript.GetTimerMaxValue += _playerHealth.HealthInitialGet;
+        _playerHealth.onPlayerHealthChanged += _gameManagerScript.PlayerHealthUI;
+        _enemyController.OnAllUFOSDefeated += _gameManagerScript.WinPlayer;
+        _buttonsPause.pauseEvent += _gameManagerScript.PauseMenuView;
+
         _playerMovement.OnPointReached += _polygonController.AddPoint;
         var collectables = FindObjectsOfType<TimeCollectable>();
 

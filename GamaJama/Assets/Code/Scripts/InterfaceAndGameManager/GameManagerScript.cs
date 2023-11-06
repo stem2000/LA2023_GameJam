@@ -13,15 +13,16 @@ public class GameManagerScript : MonoBehaviour
 
 
     [SerializeField] private Image timerHP;
-    [SerializeField] private float timerMaxValue = 60f;
-    private float timerValue;
+    private int timerMaxValue;
+    public event Func<int> GetTimerMaxValue;
 
 
     private void Start()
     {
-        UIButtons.pauseEvent += PauseMenuView; // then add entri point
+        timerMaxValue = (int)(GetTimerMaxValue?.Invoke());
+        //UIButtons.pauseEvent += PauseMenuView; // then add entri point
     }
-    private void PauseMenuView(bool pause)
+    public void PauseMenuView(bool pause)
     {
         if (pause == true)
         {
@@ -37,26 +38,24 @@ public class GameManagerScript : MonoBehaviour
             }
         }
     }
-    private void DefeatPlayer(object sender, EventArgs e)
+    public void DefeatPlayer()
     {
         Time.timeScale = 0;
         menusList[1].SetActive(true);
     }
-    private void WinPlayer(object sender, EventArgs e)
+    public void WinPlayer()
     {
         Time.timeScale = 0;
         menusList[2].SetActive(true);
     }
-    private void PlayerHealthUI()
+    public void PlayerHealthUI(int timerValue)
     {
-        timerHP.fillAmount = timerValue / timerMaxValue;
+        timerHP.fillAmount = (float)timerValue / timerMaxValue;
     }
     private void Update()
     {
         if (Input.GetKeyDown(pauseButton))
             PauseMenuView(true);
-        PlayerHealthUI();
-
     }
 
 }

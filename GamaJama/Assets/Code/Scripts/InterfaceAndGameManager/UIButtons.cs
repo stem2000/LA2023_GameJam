@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class UIButtons : MonoBehaviour
 {
-    public static event Action<bool> pauseEvent;
+    public  event Action<bool> pauseEvent;
 
 
     public void Levels(int idScene)

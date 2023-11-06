@@ -15,18 +15,23 @@ public class PlayerHealth : MonoBehaviour
     private int _healthDrainPerSecond = 1;
 
     // [Events]
-    public event EventHandler<int> onPlayerHealthChanged;
-    public event EventHandler onPlayerDeath;
+    public event Action<int> onPlayerHealthChanged;
+    public  event Action onPlayerDeath;
 
     private void Start()
     {
         HealthReset();
     }
+    public int HealthInitialGet()
+    {
+        return _healthInitial;
+    }
+
     // Sets player's current health back to its initial value
     public void HealthReset()
     {
         _healthCurrent = _healthInitial;
-        onPlayerHealthChanged?.Invoke(this, _healthCurrent);
+        onPlayerHealthChanged?.Invoke(_healthCurrent);
         // sets hp timer that lowers every second
         InvokeRepeating("HealthDrain", 0, 1.0f);
     }
@@ -35,10 +40,10 @@ public class PlayerHealth : MonoBehaviour
     public void HealthDamage(int damageAmount)
     {
         _healthCurrent -= damageAmount;
-        onPlayerHealthChanged?.Invoke(this, _healthCurrent);
+        onPlayerHealthChanged?.Invoke(_healthCurrent);
         if (_healthCurrent <= 0)
         {
-            onPlayerDeath?.Invoke(this, EventArgs.Empty);
+            onPlayerDeath?.Invoke();
         }
 
         Debug.Log("Player hp: " + _healthCurrent);
@@ -48,7 +53,7 @@ public class PlayerHealth : MonoBehaviour
     public void HealthRestore(int healAmount)
     {
         _healthCurrent += healAmount;
-        onPlayerHealthChanged?.Invoke(this, _healthCurrent);
+        onPlayerHealthChanged?.Invoke(_healthCurrent);
         Debug.Log("Player healed: " + _healthCurrent);
     }
 

@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private List<Enemy> _enemyList;
 
     public event EventHandler<Vector3> OnShipDropLoot;
-    public event EventHandler OnAllUFOSDefeated;
+    public event Action OnAllUFOSDefeated;
 
     void Start()
     {
@@ -25,7 +25,7 @@ public class EnemyController : MonoBehaviour
 
         if (_enemyList.Count == 0)
         {
-            OnAllUFOSDefeated?.Invoke(this, EventArgs.Empty);
+            OnAllUFOSDefeated?.Invoke();
         }
     }
 
