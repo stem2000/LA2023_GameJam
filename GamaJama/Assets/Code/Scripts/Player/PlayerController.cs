@@ -4,10 +4,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    public event Action<Vector3, bool> OnPointReached;
     private PlayerMovement _playerMovement;
     private PlayerHealth _playerHealth;
     private GameObject _clickedObject;
-    private Vector3 _clickedPoint;
     private bool _pointStatus;
 
     public void Initialize()
@@ -28,9 +28,15 @@ public class PlayerController : MonoBehaviour
 
     private void HandleClick(bool pointStatus)
     {
-        _clickedPoint = GetClickedPoint();
-        if (!_playerMovement.IsMoving&& _clickedPoint!=null)
-            _playerMovement.Move(_clickedPoint, pointStatus);  
+        _clickedObject = GetClickedObject();
+        if (_clickedObject != null && _clickedObject.GetComponent<Enemy>())
+        {
+            if (!_playerMovement.IsMoving)
+            {
+                _playerMovement.Move(_clickedObject.transform);
+                _pointStatus = pointStatus;
+            }
+        }
     }
 
     private GameObject GetClickedObject()
@@ -43,19 +49,14 @@ public class PlayerController : MonoBehaviour
         return null;
     }
 
-    private Vector3 GetClickedPoint()
-    {
-        var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPos.z = 0f;
-
-        return mouseWorldPos;
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         var playerDamager = collision.gameObject.GetComponent<IPlayerDamager>();
 
-        if(playerDamager != null)
+        if (collision.gameObject == _clickedObject)
+            OnPointReached?.Invoke(collision.transform.position, _pointStatus);
+
+        if (playerDamager != null)
             _playerHealth.HealthDamage(playerDamager.GetDamage());
     }
 

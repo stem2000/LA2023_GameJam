@@ -8,7 +8,6 @@ public class EntryPoint : MonoBehaviour
 {
     [SerializeField] private PolygonController _polygonController;
     [SerializeField] private PlayerController _playerController;
-    [SerializeField] private PlayerMovement _playerMovement;
     [SerializeField] private PlayerHealth _playerHealth;
 
     [SerializeField] private EnemyController _enemyController;
@@ -24,24 +23,36 @@ public class EntryPoint : MonoBehaviour
     {
         _playerController.Initialize();
         _polygonController.Initialize(_playerController.transform.position);
+        SubscribeComponentsToEvents();
+    }
+
+    private void SubscribeComponentsToEvents()
+    {
+        SubscribeComponentsToGameManagerEvents();
+        SubscribeComponentsToEnemyControllerEvents();
         SubscribeComponentsToPlayerEvents();
+        SubscribeComponentsToUIEvents();
     }
 
     private void SubscribeComponentsToPlayerEvents()
     {
         _playerHealth.onPlayerDeath += _gameManagerScript.DefeatPlayer;
-        _gameManagerScript.GetTimerMaxValue += _playerHealth.HealthInitialGet;
         _playerHealth.onPlayerHealthChanged += _gameManagerScript.PlayerHealthUI;
+    }
+
+    private void SubscribeComponentsToGameManagerEvents()
+    {
+        _gameManagerScript.GetTimerMaxValue += _playerHealth.HealthInitialGet;
+    }
+
+    private void SubscribeComponentsToEnemyControllerEvents()
+    {
         _enemyController.OnAllUFOSDefeated += _gameManagerScript.WinPlayer;
-        _buttonsPause.pauseEvent += _gameManagerScript.PauseMenuView;
+    }
 
-        _playerMovement.OnPointReached += _polygonController.AddPoint;
-        var collectables = FindObjectsOfType<TimeCollectable>();
-
-        foreach (var collectable in collectables)
-        {
-            collectable.OnCollectableTaken += _playerHealth.HealthRestore;
-        }
+    private void SubscribeComponentsToUIEvents()
+    {
+        //_buttonsPause.pauseEvent += _gameManagerScript.PauseMenuView;
     }
 
 }

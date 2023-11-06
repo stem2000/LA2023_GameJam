@@ -16,24 +16,25 @@ public class PlayerMovement : MonoBehaviour
     private bool _isMoving = false;
     public event Action<Vector3, bool> OnPointReached;
 
-    public void Move(Vector3 movementDestination, bool _pointStatus)
+    public void Move(Transform target)
     {
-        StartCoroutine(PlayerMoveTowards(movementDestination, _pointStatus));
+        StartCoroutine(MoveToTarget(target));
     }
 
-    private IEnumerator PlayerMoveTowards(Vector3 target, bool _pointStatus)
+    private IEnumerator MoveToTarget(Transform target)
     {
-        Vector3 movementDestination = new Vector3(target.x, target.y, 0);
+        Vector3 movementDestination = target.position;
+
         _isMoving = true;
-        while (Vector3.Distance(transform.position, movementDestination) >  _playerMoveFault)
+
+        while (target != null && Vector3.Distance(transform.position, movementDestination) > _playerMoveFault)
         {
-            Vector3 direction = movementDestination - transform.position;
-            ApplyRotation(direction.normalized);
-            Vector3 destination = Vector3.MoveTowards(transform.position, movementDestination, _playerSpeed * Time.deltaTime);
-            transform.position = destination;
+            movementDestination = target.position;        
+            ApplyRotation((movementDestination - transform.position).normalized);
+            transform.position = Vector3.MoveTowards(transform.position, movementDestination, _playerSpeed * Time.deltaTime);
             yield return null;
         }
-        OnPointReached?.Invoke(movementDestination, _pointStatus);
+
         _isMoving = false;
     }
 
