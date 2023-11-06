@@ -32,6 +32,7 @@ public class EntryPoint : MonoBehaviour
         SubscribeComponentsToEnemyControllerEvents();
         SubscribeComponentsToPlayerEvents();
         SubscribeComponentsToUIEvents();
+        SubscribeToCollectablesEvents();
     }
 
     private void SubscribeComponentsToPlayerEvents()
@@ -54,6 +55,14 @@ public class EntryPoint : MonoBehaviour
     private void SubscribeComponentsToUIEvents()
     {
         //_buttonsPause.pauseEvent += _gameManagerScript.PauseMenuView;
+    }
+
+    private void SubscribeToCollectablesEvents()
+    {
+        var collectables = FindObjectsOfType<MonoBehaviour>().OfType<ICollectable>();
+
+        foreach (ICollectable collectable in collectables)
+            collectable.OnCollectableTaken += _playerHealth.HealthRestore;
     }
 
 }
