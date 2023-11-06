@@ -20,7 +20,6 @@ public class GameManagerScript : MonoBehaviour
     private void Start()
     {
         timerMaxValue = (int)(GetTimerMaxValue?.Invoke());
-        //UIButtons.pauseEvent += PauseMenuView; // then add entri point
     }
     public void PauseMenuView(bool pause)
     {
@@ -40,13 +39,19 @@ public class GameManagerScript : MonoBehaviour
     }
     public void DefeatPlayer()
     {
-        Time.timeScale = 0;
-        menusList[1].SetActive(true);
+        if (menusList[2].activeSelf == false)
+        {
+            Time.timeScale = 0;
+            menusList[1].SetActive(true);
+        }
     }
     public void WinPlayer()
     {
-        Time.timeScale = 0;
-        menusList[2].SetActive(true);
+        if (menusList[1].activeSelf == false)
+        {
+            Time.timeScale = 0;
+            menusList[2].SetActive(true);
+        }
     }
     public void PlayerHealthUI(int timerValue)
     {
