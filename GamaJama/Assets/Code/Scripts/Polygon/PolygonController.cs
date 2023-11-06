@@ -8,13 +8,17 @@ using UnityEngine;
 public class PolygonController : MonoBehaviour
 {
     [SerializeField] private float _timeBeforeDestroy = 1f;
+    [SerializeField] private Transform _polyTarget;
 
     private List<Vector3> _polyPoints;
     private LineRenderer _lineRenderer;
+    private bool _isClosedUp = false;
     
-    public void Initialize(Vector3 startPoint)
+    public void Initialize(Transform target)
     {
-        _polyPoints = new List<Vector3>(){ startPoint };
+        _polyTarget = target;
+
+        _polyPoints = new List<Vector3>(){ _polyTarget.position };
         _lineRenderer = GetComponentInChildren<LineRenderer>();
     }
 
@@ -32,14 +36,23 @@ public class PolygonController : MonoBehaviour
     {
         lineRenderer.positionCount = _polyPoints.Count;
         lineRenderer.SetPositions(_polyPoints.ToArray());
+
+        if (!_isClosedUp)
+        {
+            lineRenderer.positionCount += 1;
+            lineRenderer.SetPosition(lineRenderer.positionCount - 1, _polyTarget.position);
+        }
     }
 
-    public void AddPoint(Vector3 point, bool isEndPoint)
+    public void AddPoint(bool isEndPoint)
     {
-        _polyPoints.Add(point);
+        _polyPoints.Add(_polyTarget.position);
 
-        if(isEndPoint)
+        if (isEndPoint)
+        {
+            _isClosedUp = true;
             CloseUpPolygon();
+        }
     }
 
     private void CloseUpPolygon()
@@ -47,14 +60,13 @@ public class PolygonController : MonoBehaviour
         StartCoroutine(DisplayPolyCopy(Instantiate(_lineRenderer, transform)));
         FindCollectablesInside();
         ResetPoints();
+        _isClosedUp = false;
     }
 
     private void ResetPoints()
     {
-        var lastPoint = _polyPoints.Last();
-
         _polyPoints.Clear();
-        _polyPoints.Add(lastPoint);
+        _polyPoints.Add(_polyTarget.position);
     }
 
     private IEnumerator DisplayPolyCopy(LineRenderer polyCopy)

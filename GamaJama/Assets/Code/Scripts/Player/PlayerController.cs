@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public event Action<Vector3, bool> OnPointReached;
+    public event Action<bool> OnPointReached;
     private PlayerMovement _playerMovement;
     private PlayerHealth _playerHealth;
     private GameObject _clickedObject;
@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleClick(bool pointStatus)
     {
-        if (!_playerMovement.IsMoving)
+        if(!_playerMovement.IsMoving) 
             _clickedObject = GetClickedObject();
         if (_clickedObject != null && _clickedObject.GetComponent<Enemy>())
         {
@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
         var playerDamager = collision.gameObject.GetComponent<IPlayerDamager>();
 
         if (collision.gameObject == _clickedObject)
-            OnPointReached?.Invoke(collision.transform.position, _pointStatus);
+            OnPointReached?.Invoke(_pointStatus);
 
         if (playerDamager != null)
             _playerHealth.HealthDamage(playerDamager.GetDamage());

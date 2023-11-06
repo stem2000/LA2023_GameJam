@@ -22,7 +22,7 @@ public class EntryPoint : MonoBehaviour
     private void InitializeComponents()
     {
         _playerController.Initialize();
-        _polygonController.Initialize(_playerController.transform.position);
+        _polygonController.Initialize(_playerController.transform);
         SubscribeComponentsToEvents();
     }
 
