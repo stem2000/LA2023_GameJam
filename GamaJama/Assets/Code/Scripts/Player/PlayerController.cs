@@ -28,7 +28,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleClick(bool pointStatus)
     {
-        _clickedObject = GetClickedObject();
+        if (!_playerMovement.IsMoving)
+            _clickedObject = GetClickedObject();
         if (_clickedObject != null && _clickedObject.GetComponent<Enemy>())
         {
             if (!_playerMovement.IsMoving)
