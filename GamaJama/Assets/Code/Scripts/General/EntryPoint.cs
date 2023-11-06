@@ -38,6 +38,7 @@ public class EntryPoint : MonoBehaviour
     {
         _playerHealth.onPlayerDeath += _gameManagerScript.DefeatPlayer;
         _playerHealth.onPlayerHealthChanged += _gameManagerScript.PlayerHealthUI;
+        _playerController.OnPointReached += _polygonController.AddPoint;
     }
 
     private void SubscribeComponentsToGameManagerEvents()
